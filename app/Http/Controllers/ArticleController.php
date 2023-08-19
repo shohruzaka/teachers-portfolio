@@ -79,7 +79,9 @@ class ArticleController extends Controller
      */
     public function edit($id)
     {
-        //
+        $article = Article::findOrFail($id);
+        $users = User::select('id', 'first_name', 'last_name')->get()->toArray();
+        return view('article.edit',compact('article', 'users'));
     }
 
     /**
@@ -91,7 +93,16 @@ class ArticleController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'title' => 'required',
+            'annotation' => 'required',
+            'journal_name' => 'required',
+            'pub_date' => 'date|required',
+            'users'=>'required'
+        ]);
+
+        $data = $request->all();
+        $ar = Article::find($id);
     }
 
     /**

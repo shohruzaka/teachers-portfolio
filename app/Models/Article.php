@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Cviebrock\EloquentSluggable\Sluggable;
-
+use Illuminate\Http\Request;
 
 class Article extends Model
 {
@@ -30,6 +30,12 @@ class Article extends Model
                 'source' => 'title'
             ]
         ];
+    }
+    public static function manageFile(Request $request, $file = null){
+        if($request->hasFile('file_url')){
+                
+        }
+        
     }
 
 
