@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('journal_name');
             $table->date('pub_date');
             $table->string('file_url');
+            $table->unsignedInteger('author_id');
             $table->integer('views')->unsigned()->default(0);
             $table->foreign('author_id')->references('id')->on('users');
             $table->timestamps();
