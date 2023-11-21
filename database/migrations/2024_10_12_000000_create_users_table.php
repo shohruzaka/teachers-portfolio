@@ -20,10 +20,9 @@ return new class extends Migration
             $table->string('avatar_url');
             $table->integer('department_id')->unsigned();
             $table->integer('qualification_id')->unsigned();
-            $table->tinyInteger('is_admin')->unsigned()->default('0');
-            
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
+            $table->tinyInteger('is_admin')->unsigned()->default('0');
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
