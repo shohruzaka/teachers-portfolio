@@ -1,3 +1,3 @@
 # teachers-portfolio
-Professor o'qituvchilar ilmiy izlanishlari natijalarini saqlash uchun web ilova
-Shohruz Turg'unaliyev
+Professor o'qituvchilar ilmiy izlanishlari natijalari, maqola va ilmiy adabiyotlarini talabalarga qulay tarzda yetkazuvchi uchun web ilova
+
