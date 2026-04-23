@@ -22,9 +22,13 @@ class MainController extends Controller
 
     public function cabinet()
     {
-        $article = Article::with('users')->get();
-        $deps = Department::all();
-        return view('user.cabinet', compact('article','deps'));
+        $user = auth()->user();
+        
+        if ($user->hasRole('Admin')) {
+            return redirect()->route('admin.dashboard');
+        }
+        
+        return redirect()->route('teacher.dashboard');
     }
 
 

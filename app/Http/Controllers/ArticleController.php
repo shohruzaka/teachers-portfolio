@@ -3,116 +3,101 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
-use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Arr;
+use Illuminate\Http\Request;
+use App\Http\Requests\StoreArticleRequest;
+use App\Http\Requests\UpdateArticleRequest;
+use Illuminate\Support\Facades\Storage;
 
 class ArticleController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
+        //
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
-        // $users = User::selectRaw('CONCAT(first_name, " ", last_name) as full_name')->get();
-
         $users = User::select('id', 'first_name', 'last_name')->get()->toArray();
-        // dd($users);
         return view('article.create', compact('users'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function store(StoreArticleRequest $request)
     {
-        
-        $request->validate([
-            'title' => 'required|unique:articles',
-            'annotation' => 'required',
-            'journal_name' => 'required|',
-            'pub_date' => 'date|required',
-            'file_url' => 'file|required',
-        ]);
-
-        $data = $request->all();
-        
-        $file_url = $request->file('file_url')->store("maqola");
-        $data['file_url'] = $file_url;
+        $data = $request->validated();
+        $data['file_url'] = $request->file('file_url')->store("maqola");
 
         $article = Article::create($data);
-        $article->users()->sync($request->users);
-        return redirect()->route('cabinet')->with('success',"Maqola xatosiz qo'shildi");
+
+        // O'qituvchi o'zini mualliflar qatoridan olib tashlamasligi uchun
+        $users = $request->users ?? [];
+        if (!auth()->user()->hasRole('Admin') && !in_array(auth()->id(), $users)) {
+            $users[] = auth()->id();
+        }
+
+        $article->users()->sync($users);
+        
+        return redirect()->route('cabinet')->with('success', "Maqola xatosiz qo'shildi");
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         $article = Article::findOrFail($id);
+        
+        $this->authorize('update', $article);
+
         $users = User::select('id', 'first_name', 'last_name')->get()->toArray();
-        return view('article.edit',compact('article', 'users'));
+        return view('article.edit', compact('article', 'users'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+    public function update(UpdateArticleRequest $request, $id)
     {
-        $request->validate([
-            'title' => 'required',
-            'annotation' => 'required',
-            'journal_name' => 'required',
-            'pub_date' => 'date|required',
-            'users'=>'required'
-        ]);
+        $article = Article::findOrFail($id);
 
-        $data = $request->all();
-        $ar = Article::find($id);
+        $this->authorize('update', $article);
+
+        $data = $request->validated();
+
+        if ($request->hasFile('file_url')) {
+            if ($article->file_url && Storage::exists($article->file_url)) {
+                Storage::delete($article->file_url);
+            }
+            $data['file_url'] = $request->file('file_url')->store('maqola');
+        } else {
+            unset($data['file_url']);
+        }
+
+        $article->update($data);
+
+        $users = $request->users ?? [];
+        if (!auth()->user()->hasRole('Admin') && !in_array(auth()->id(), $users)) {
+            $users[] = auth()->id();
+        }
+        
+        $article->users()->sync($users);
+
+        return redirect()->route('cabinet')->with('success', 'Maqola muvaffaqiyatli tahrirlandi');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
-        //
+        $article = Article::findOrFail($id);
+
+        $this->authorize('delete', $article);
+
+        if ($article->file_url && Storage::exists($article->file_url)) {
+            Storage::delete($article->file_url);
+        }
+
+        $article->users()->detach();
+        $article->delete();
+
+        return redirect()->back()->with('success', 'Maqola muvaffaqiyatli o\'chirildi');
     }
 }
+

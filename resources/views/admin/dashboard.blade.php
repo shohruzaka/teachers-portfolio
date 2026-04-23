@@ -3,26 +3,7 @@
 @section('content')
 <main id="main-container">
   <!-- Hero -->
-  <div class="bg-header-dark">
-    <div class="content content-full py-1">
-      <div class="row pt-3">
-        <div class="col-md py-3 d-md-flex align-items-md-center text-center">
-          <h1 class="text-white mb-0">
-            <span class="fw-semibold">Boshqaruv paneli</span>
-            <span class="fw-medium fs-base text-white-75 d-block d-md-inline-block">Xush kelibsiz {{ auth()->user()->first_name }} </span>
-          </h1>
-        </div>
-        <!-- <div class="col-md py-3 d-md-flex align-items-md-center justify-content-md-end text-center">
-          <button type="button" class="btn btn-primary me-1">
-            <i class="fa fa-plus opacity-50 me-1"></i> New Project
-          </button>
-          <button type="button" class="btn btn-primary">
-            <i class="fa fa-cog"></i>
-          </button>
-        </div> -->
-      </div>
-    </div>
-  </div>
+  @include('partials.hero', ['title' => 'Boshqaruv paneli'])
   <!-- END Hero -->
 
   <!-- Page Content -->
@@ -117,7 +98,6 @@
       <!-- END Statistics -->
 
       <!-- Quick Stats -->
-      @if(auth()->user()->is_admin)
       <div class="row">
         <div class="col-md-6">
           <div class="block block-rounded">
@@ -166,7 +146,7 @@
             </div>
           </div>
           <!-- modal -->
-          <div class="modal fade" id="modal-block-popout" tabindex="-1" role="dialog" aria-labelledby="modal-block-popout" aria-hidden="true">
+          <div class="modal fade" id="modal-block-popout" tabindex="-1" role="dialog" aria-labelledby="modal-block-popout-label" aria-hidden="true">
             <div class="modal-dialog modal-dialog-popout" role="document">
               <div class="modal-content">
                 <div class="block block-rounded block-themed block-transparent mb-0">
@@ -201,7 +181,6 @@
           <!-- modal -->
         </div>
       </div>
-      @endif
 
 
       <div class="row">
@@ -209,41 +188,13 @@
           <h2 class="content-heading">
             <i class="fa fa-clock text-success me-1"></i> Barcha maqolalar
           </h2>
-          @foreach($article as $ar)
-          <div class="block block-rounded">
-            <div class="block-content block-content-full">
-              <div class="d-sm-flex">
-                <div class="ms-sm-2 me-sm-4 py-2 text-center">
-                  <a class="item item-rounded bg-body-dark text-dark fs-2 mb-2 mx-auto" href="{{ route('download',[$ar->id])}}">
-                    <i class="si si-doc text-info"></i>
-                  </a>
-                  <a class="btn btn-sm btn-primary" href="{{route('articles.edit', $ar->id)}}">
-                    <i class="si si-pencil"></i> Edit
-                  </a>
-                  <form action="{{route('articles.destroy', $ar->id)}}">
-                    @csrf @method('METHOD')
-                    <button type="submit" class="btn btn-sm btn-danger my-1" onclick="return confirm('delete')">Delete</button>
-                  </form>
-                </div>
-                <div class="py-2">
-                  <a class="link-fx h4 mb-1 d-inline-block text-dark" href="be_pages_jobs_listing.html">
-                    {{$ar->title}}
-                  </a>
-                  <div class="fs-sm fw-semibold text-muted mb-2">
-                    {{$ar->journal_name}} - {{$ar->pub_date}}
-                  </div>
-                  <p class="text-muted mb-2">
-                    {{$ar->annotation}}
-                  </p>
-                  <div>
-                    @foreach($ar->users as $user)
-                    <span class="badge bg-primary">{{ $user->first_name}} {{$user->last_name}} </span>
-                    @endforeach
-                  </div>
-                </div>
+          @if($article->isEmpty())
+              <div class="alert alert-info">
+                  Hozircha maqolalar mavjud emas.
               </div>
-            </div>
-          </div>
+          @endif
+          @foreach($article as $ar)
+              @include('partials.article-card', ['article' => $ar, 'showActions' => true])
           @endforeach
         </div>
       </div>

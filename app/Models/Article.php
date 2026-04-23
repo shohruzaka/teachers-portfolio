@@ -19,8 +19,14 @@ class Article extends Model
     
     public function users()
     {
-
         return $this->belongsToMany(User::class);
+    }
+
+    public function scopeOwnedBy($query, $userId)
+    {
+        return $query->whereHas('users', function ($q) use ($userId) {
+            $q->where('users.id', $userId);
+        });
     }
 
     public function sluggable(): array

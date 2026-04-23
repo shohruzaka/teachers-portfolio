@@ -1,32 +1,49 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Laravel\Fortify\Fortify;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\MainController;
-use Illuminate\Routing\RouteGroup;
+use App\Http\Controllers\SocialAuthController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
+use App\Http\Controllers\Teacher\DashboardController as TeacherDashboard;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes 
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
 */
 
-Route::get('/',[MainController::class,'index'])->name('home');
+// Ochiq sahifalar
+Route::get('/', [MainController::class, 'index'])->name('home');
+Route::get('/download/{file_url}', [MainController::class, 'download'])->name('download');
+Route::get('/downloadid/{id}', [MainController::class, 'downloadid'])->name('downloadid');
 
-Route::get('/cabinet', [MainController::class, 'cabinet'])->name('cabinet');
+// GitHub OAuth
+Route::middleware('guest')->group(function () {
+    Route::get('/auth/github/redirect', [SocialAuthController::class, 'redirectToGithub'])->name('auth.github');
+    Route::get('/auth/github/callback', [SocialAuthController::class, 'handleGithubCallback'])->name('auth.github.callback');
+});
 
-Route::resource('/articles',ArticleController::class);
+// Faqat tizimga kirgan foydalanuvchilar uchun
+Route::middleware('auth')->group(function () {
+    // Yo'naltiruvchi marshrut
+    Route::get('/cabinet', [MainController::class, 'cabinet'])->name('cabinet');
+    
+    // Maqolalar (Policy orqali himoyalangan)
+    Route::resource('/articles', ArticleController::class);
 
-Route::get('/download/{file_url}', [MainController::class,'download'])->name('download');
-Route::get('/downloadid/{id}', [MainController::class,'downloadid'])->name('downloadid');
+    // Admin paneli (Spatie role orqali himoyalangan)
+    Route::middleware(['role:Admin'])->group(function () {
+        Route::get('/admin/dashboard', [AdminDashboard::class, 'index'])->name('admin.dashboard');
+        
+        Route::controller(DepartmentController::class)->name('department.')->group(function () {
+            Route::post('/create', 'create')->name('create');
+        });
+    });
 
-Route::controller(DepartmentController::class)->name('department.')->group(function(){
-    Route::post('/create','create')->name('create');
+    // O'qituvchi paneli (Spatie role orqali himoyalangan)
+    Route::middleware(['role:Teacher'])->group(function () {
+        Route::get('/teacher/dashboard', [TeacherDashboard::class, 'index'])->name('teacher.dashboard');
+    });
 });

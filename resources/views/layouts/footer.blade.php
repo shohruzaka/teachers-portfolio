@@ -5,7 +5,7 @@
         Crafted with <i class="fa fa-heart text-danger"></i> by Shohruz
       </div>
       <div class="col-sm-6 order-sm-1 text-center text-sm-start">
-        <a class="fw-semibold" href="portfolio.loc" target="_blank">Nurafshon</a> &copy; <span data-toggle="year-copy"></span>
+        <a class="fw-semibold" href="portfolio.loc" target="_blank">Cyber University</a> &copy; <span data-toggle="year-copy"></span>
       </div>
     </div>
   </div>

@@ -1,10 +1,11 @@
 @extends('auth.layout')
 
-@section('content')
+@section('title', 'Tizimga kirish')
 
+@section('content')
 <main id="main-container">
   <!-- Page Content -->
-  <div class="bg-image" style="background-image: url('assets/media/photos/photo19@2x.jpg');">
+  <div class="bg-image" style="background-image: url('{{ asset('assets/media/photos/photo19@2x.jpg') }}');">
     <div class="row g-0 justify-content-center bg-primary-dark-op">
       <div class="hero-static col-sm-8 col-md-6 col-xl-4 d-flex align-items-center p-2 px-sm-0">
         <!-- Sign In Block -->
@@ -12,7 +13,7 @@
           <div class="block-content block-content-full px-lg-5 px-xl-6 py-4 py-md-5 py-lg-4 bg-body-extra-light">
             <!-- Header -->
             <div class="mb-2 text-center">
-              <a class="link-fx fw-bold fs-1" href="index.html">
+              <a class="link-fx fw-bold fs-1" href="{{ route('home') }}">
                 <span class="text-dark">Nur</span><span class="text-primary">afshon</span>
               </a>
               <p class="text-uppercase fw-bold fs-sm text-muted">Profilga kirish</p>
@@ -20,13 +21,11 @@
             <!-- END Header -->
 
             <!-- Sign In Form -->
-            <!-- jQuery Validation (.js-validation-signin class is initialized in js/pages/op_auth_signin.min.js which was auto compiled from _js/pages/op_auth_signin.js) -->
-            <!-- For more info and examples you can check out https://github.com/jzaefferer/jquery-validation -->
-            <form class="js-validation-signin" action="{{route('login')}}" method="POST">
+            <form class="js-validation-signin" action="{{ route('login') }}" method="POST">
               @csrf
               <div class="mb-4">
                 <div class="input-group input-group-lg">
-                  <input type="text" class="form-control @error('email') is-invalid @enderror" id="login-username" name="email" placeholder="Email">
+                  <input type="email" class="form-control @error('email') is-invalid @enderror" id="login-email" name="email" placeholder="Elektron pochta" value="{{ old('email') }}">
                   <span class="input-group-text">
                     <i class="fa fa-user-circle"></i>
                   </span>
@@ -37,11 +36,11 @@
               </div>
               <div class="mb-4">
                 <div class="input-group input-group-lg">
-                  <input type="password" class="form-control @error('password') is-invalid @enderror" id="login-password" name="password" placeholder="Password">
+                  <input type="password" class="form-control @error('password') is-invalid @enderror" id="login-password" name="password" placeholder="Parol">
                   <span class="input-group-text">
                     <i class="fa fa-asterisk"></i>
                   </span>
-                  @error('pasword')
+                  @error('password')
                   <div class="invalid-feedback">{{ $message }}</div>
                   @enderror
                 </div>
@@ -52,24 +51,35 @@
                   <label class="form-check-label ms-2" for="login-remember-me">Eslab qolish</label>
                 </div>
                 <div class="fw-semibold fs-sm py-1">
-                  <a href="javascript:void(0)">Forgot Password?</a>
+                  <a href="#">Parolni unutdingizmi?</a>
                 </div>
               </div>
               <div class="text-center mb-4">
-                <button type="submit" class="btn btn-hero btn-primary">
-                  <i class="fa fa-fw fa-sign-in-alt opacity-50 me-1"></i> Log In
+                <button type="submit" class="btn btn-hero btn-primary w-100">
+                  <i class="fa fa-fw fa-sign-in-alt opacity-50 me-1"></i> Tizimga kirish
                 </button>
               </div>
             </form>
 
+            {{-- Ajratuvchi chiziq --}}
+            <div class="d-flex align-items-center mb-3">
+              <hr class="flex-grow-1">
+              <span class="px-3 text-muted fs-sm fw-medium">yoki</span>
+              <hr class="flex-grow-1">
+            </div>
 
-            <div class="text-center mb-2">
-              <a class="btn btn-lg btn-alt-primary" href="{{route('register')}}">
-                <i class="fa fa-fw fa-plus me-1"></i> Registratsiya
+            {{-- GitHub orqali kirish --}}
+            <div class="text-center mb-3">
+              <a class="btn btn-lg btn-dark w-100" href="{{ route('auth.github') }}">
+                <i class="fa-brands fa-github me-2"></i> GitHub orqali kirish
               </a>
             </div>
 
-
+            <div class="text-center mb-2">
+              <a class="btn btn-lg btn-alt-primary w-100" href="{{ route('register') }}">
+                <i class="fa fa-fw fa-plus me-1"></i> Ro'yxatdan o'tish
+              </a>
+            </div>
             <!-- END Sign In Form -->
           </div>
         </div>
@@ -79,5 +89,4 @@
   </div>
   <!-- END Page Content -->
 </main>
-
 @endsection

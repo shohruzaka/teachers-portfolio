@@ -1,22 +1,22 @@
 <!doctype html>
-<html lang="en">
+<html lang="uz">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
+    <title>@yield('title', 'TeachPort — Avtorizatsiya')</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <!-- Icons -->
-    <!-- The following icons can be replaced with your own, they are used by desktop and mobile browsers -->
-    <link rel="shortcut icon" href="{{asset('assets/media/nurafshon.png')}}">
-    <link rel="icon" type="image/png" sizes="192x192" href="{{asset('assets/media/nurafshon.png')}}">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{asset('assets/media/nurafshon.png')}}">
-    <!-- END Icons -->
-    <!-- Stylesheets -->
-    <!-- Fonts and Dashmix framework -->
+    {{-- Favicons --}}
+    <link rel="shortcut icon" href="{{ asset('assets/media/nurafshon.png') }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('assets/media/nurafshon.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('assets/media/nurafshon.png') }}">
+
+    {{-- Shriftlar va Dashmix framework --}}
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
-    <link rel="stylesheet" id="css-main" href="{{asset('assets/css/dashmix.min.css')}}">
-
+    <link rel="stylesheet" id="css-main" href="{{ asset('assets/css/dashmix.min.css') }}">
+    @stack('css')
 </head>
 
 <body>
@@ -27,20 +27,11 @@
         <!-- END Main Container -->
     </div>
 
-
-
-
-
-    <script src="{{asset('assets/js/dashmix.app.min.js')}}"></script>
-
-    <!-- jQuery (required for jQuery Validation plugin) -->
-    <script src="{{asset('assets/js/lib/jquery.min.js')}}"></script>
-
-    <!-- Page JS Plugins -->
-    <script src="{{asset('assets/js/plugins/jquery-validation/jquery.validate.min.js')}}"></script>
-
-    <!-- Page JS Code -->
-    <script src="{{asset('assets/js/pages/op_auth_signin.min.js')}}"></script>
+    <script src="{{ asset('assets/js/dashmix.app.min.js') }}"></script>
+    <script src="{{ asset('assets/js/lib/jquery.min.js') }}"></script>
+    <script src="{{ asset('assets/js/plugins/jquery-validation/jquery.validate.min.js') }}"></script>
+    
+    @stack('js')
 </body>
 
 </html>
